@@ -1,19 +1,19 @@
 # About The Program
 This is a program that takes in 3D coordinates and colours of a shape, and renders a 3D shape
 
-![alt text](Program_sample_gifs\cone.gif "Cone")
+![alt text](https://github.com/naseer2426/Three-Dimention-Rendering-Tk/tree/master/Program_sample_gifs/cone.gif "Cone")
 
-![alt text](Program_sample_gifs\cube.gif "Cube")
+![alt text](https://github.com/naseer2426/Three-Dimention-Rendering-Tk/tree/master/Program_sample_gifs/cube.gif "Cube")
 
 # Maths Behind the Scenes
 The maths used in the program is super interesting! :heart_eyes:. Below are the different problems that needed to be solved for making this program:
 
 - ## Converting 3D Coordinates into 2D pixel locations
-  ![](Proof_pics\1.JPG)
-  ![](Proof_pics\2.JPG)
-  ![](Proof_pics\3.JPG)
-  ![](Proof_pics\4.JPG)
-  ![](Proof_pics\5.JPG)
+  ![](https://github.com/naseer2426/Three-Dimention-Rendering-Tk/tree/master/Proof_pics/1.JPG)
+  ![](https://github.com/naseer2426/Three-Dimention-Rendering-Tk/tree/master/Proof_pics/2.JPG)
+  ![](https://github.com/naseer2426/Three-Dimention-Rendering-Tk/tree/master/Proof_pics/3.JPG)
+  ![](https://github.com/naseer2426/Three-Dimention-Rendering-Tk/tree/master/Proof_pics/4.JPG)
+  ![](https://github.com/naseer2426/Three-Dimention-Rendering-Tk/tree/master/Proof_pics/5.JPG)
 
 - ## Rendering only the sides in front
   - First the program calculates the equation of the plane that each side belongs to using 3 points on that side. An inequality is created from this equation.
