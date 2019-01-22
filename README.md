@@ -1,8 +1,7 @@
 # About The Program
-This is a program that takes in 3D coordinates and colours of a shape, and renders a 3D shape
+This is a program that takes in 3D coordinates and colours, and renders a 3D shape
 
 ![alt text](Program_sample_gifs/cone.gif "Cone")
-
 ![alt text](Program_sample_gifs/cube.gif "Cube")
 
 # Maths Behind the Scenes
