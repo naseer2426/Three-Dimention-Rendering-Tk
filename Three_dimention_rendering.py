@@ -362,9 +362,6 @@ class ThreeD():
                     self.coords[i][j][-1] = (int(r),int(g),int(b))
 
 
-# root = tk.Tk()
-# canvas = tk.Canvas(root)
-# canvas.pack()
 # cube_coords = [[(1,-1,1),(-1,-1,1),(-1,-1,-1),(1,-1,-1),(1,1,-1),(1,1,1),(-1,1,1),(-1,1,-1)],[[5,6,1,0,(255,255,255)]],[[4,5,0,3,(0,255,0)]],[[2,7,4,3,(0,0,255)]],[[1,6,7,2,(255,255,255)]],[[6,5,4,7,(0,255,255)]],[[1,2,3,0,(255,255,0)]]]
 # cone_coords = [[(1,-1,1),(-1,-1,1),(-1,-1,-1),(1,-1,-1),(0,1,0)],[[1,2,3,0,(255,0,0)]],[[1,0,4,(255,0,0)]],[[0,3,4,(255,0,0)]],[[2,4,3,(255,0,0)]],[[1,4,2,(255,0,0)]]]
 # cube = ThreeD(canvas, cube_coords)
@@ -373,27 +370,6 @@ class ThreeD():
 # cube.dynamic_movement()
 # cone.print_object()
 # cone.dynamic_movement()
-# root.mainloop()
-
-# root = tk.Tk()
-# # colour_selected = tk.StringVar()
-# input_button = tk.Entry(root)
-# colour_label = tk.Label(root, text = input_button.get())
-#
-# def sel_col():
-#     # colour_selected.set(str(c_chooser.askcolor()[0]))
-#     colour_label.config(text = input_button.get())
-#
-# button_frame = tk.Frame(root)
-# select_colour_button = tk.Button(button_frame, text = 'OK', command = sel_col)
-#
-# input_button.pack(fill = tk.BOTH)
-# colour_label.pack()
-# button_frame.pack(side = 'right')
-# select_colour_button.pack(fill = tk.BOTH)
-#
-#
-# root.mainloop()
 
 class input_info():
 
