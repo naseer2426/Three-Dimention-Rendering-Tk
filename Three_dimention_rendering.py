@@ -1,11 +1,12 @@
 import tkinter as tk
 import math as m
 import time as t
+from tkinter import colorchooser as c_chooser
 class ThreeD():
 
     def __init__(self, canvas, coords, alpha = 0, beeta = 0, gaama = 0, frame_rate = 30, unit_pixels = 200):
         self.canvas = canvas
-        self.coords = coords
+        self.coords = self.set_coords(coords)
         self.alpha = alpha
         self.beeta = beeta
         self.gaama = gaama
@@ -29,6 +30,27 @@ class ThreeD():
 
         return m.sqrt((x1-x2)**2+(y1-y2)**2+(z1-z2)**2)
 
+    @staticmethod
+    def set_coords(coords):
+        #[(points),[(orientation),(orientation),(colour)]]
+        points = coords[0]
+        final_coords = []
+        for surface in coords[1:]:
+            s = []
+            for polygon in surface:
+                p = []
+
+                for point in polygon[:-1]:
+                    p.append(points[point])
+
+                p.append(polygon[-1])
+                s.append(p)
+
+            final_coords.append(s)
+
+        return final_coords
+
+
     def set_view_dist(self):
         self.d = 0
         points = self.distinct_points()
@@ -38,14 +60,17 @@ class ThreeD():
                 self.d = distance
         self.d*=50
 
-    def set_view_point(self, view_point = None):
-        if view_point == None:
+    def set_view_point(self, view_point = None, reference_point = None):
+        if view_point == None and reference_point == None:
             self.a = m.cos(self.beeta) * m.sin(self.alpha)
             self.b = m.sin(self.beeta)
             self.c = m.cos(self.beeta) * m.cos(self.alpha)
+
+            reference_point = self.rotate_zaxis((0,1,0), theeta = self.gaama)
+            self.set_virtual_axis(reference_point)
         else:
             self.a, self.b, self.c = view_point
-
+            self.set_virtual_axis(reference_point)
 
     def distinct_points(self):
         points = []
@@ -200,42 +225,7 @@ class ThreeD():
 
     def set_angles(self, alpha = None, beeta = None, gaama = None):
         if alpha == None and beeta == None and gaama ==None:
-            if 1000*self.reference_point[1]>0 and 1000*self.b>0:
-                self.beeta = m.asin(self.b)
-
-            elif 1000*self.reference_point[1]<=0:
-                self.beeta = m.pi - m.asin(self.b)
-
-            else:
-                self.beeta = 2*m.pi + m.asin(self.b)
-
-
-            if 1000*self.vxaxis[0]>0 and 1000*self.c>0:
-                self.alpha = m.asin(self.a/m.cos(self.beeta))
-
-            elif 1000*self.vxaxis[0]<=0:
-                self.alpha = m.pi - m.asin(self.a/m.cos(self.beeta))
-
-            else:
-                self.alpha = 2*m.pi + m.asin(self.a/m.cos(self.beeta))
-
-            p = self.rotate_yaxis(self.reference_point,theeta = -self.alpha)
-            p = self.rotate_xaxis(p,theeta = self.beeta)
-            # print((self.alpha/m.pi,self.beeta/m.pi))
-            # print(p)
-            if p[0]<0:
-                self.gaama = m.acos(p[1])
-            else:
-                self.gaama = -m.acos(p[1])
-
-            # if 1000*self.vxaxis[0]>0 and 1000*self.reference_point[1]>0:
-            #     self.gaama = m.pi/2 - m.asin(self.reference_point[1])
-            #
-            # elif 1000*self.vxaxis[0]<=0:
-            #     self.gaama = m.pi/2 - (m.pi - m.asin(self.reference_point[1]))
-            #
-            # else:
-            #     self.gaama = m.pi/2 - (2*m.pi + m.asin(self.reference_point[1]))
+            pass
         else:
             self.alpha = alpha
             self.beeta = beeta
@@ -324,8 +314,7 @@ class ThreeD():
         # print('Angles: ',(self.alpha/m.pi,self.beeta/m.pi,self.gaama/m.pi))
         # print('viewpoint: ',self.reference_point)
         # print('vxaxis: ',self.vxaxis)
-        self.set_view_point(new_viewpoint)
-        self.set_virtual_axis(new_referencepoint)
+        self.set_view_point(new_viewpoint,new_referencepoint)
         #self.set_angles()
 
         self.print_object(1)
@@ -344,7 +333,7 @@ class ThreeD():
     def change_colour(self, colours):
         for i in range(len(self.coords)):
             for j in range(len(self.coords[i])):
-                self.coords[i][j][-1] = colours[i][j]
+                self.colours[i][j][-1] = colours[i][j]
 
     def set_colour(self, colours = None):
         if colours == None:
@@ -373,16 +362,205 @@ class ThreeD():
                     self.coords[i][j][-1] = (int(r),int(g),int(b))
 
 
-root = tk.Tk()
-root.geometry()
-canvas = tk.Canvas(root)
-canvas.pack()
-cube_coords = [[[(1,-1,1),(-1,-1,1),(-1,-1,-1),(1,-1,-1),(1,-1,1),(255,0,0)]],[[(1,1,1),(1,-1,1),(1,-1,-1),(1,1,-1),(1,1,1),(0,255,0)]],[[(1,1,-1),(1,-1,-1),(-1,-1,-1),(-1,1,-1),(1,1,-1),(0,0,255)]],[[(-1,1,-1),(-1,-1,-1),(-1,-1,1),(-1,1,1),(-1,1,-1),(255,255,255)]],[[(-1,1,1),(-1,-1,1),(1,-1,1),(1,1,1),(-1,1,1),(0,255,255)],[(-1,1,1),(-1,0,1),(0,0.5,1),(164, 198, 57)]],[[(1,1,1),(1,1,-1),(-1,1,-1),(-1,1,1),(1,1,1),(255,255,0)]]]
-cone_coords = [[[(1,-1,1),(-1,-1,1),(-1,-1,-1),(1,-1,-1),(1,-1,1),(255,0,0)]],[[(0,1,0),(1,-1,1),(1,-1,-1),(0,1,0),(255,0,0)]],[[(0,1,0),(1,-1,-1),(-1,-1,-1),(0,1,0),(255,0,0)]],[[(0,1,0),(-1,-1,-1),(-1,-1,1),(0,1,0),(255,0,0)]],[[(0,1,0),(-1,-1,1),(1,-1,1),(0,1,0),(255,0,0)]]]
-cube = ThreeD(canvas, cube_coords, 0, 0, 0)
-cone = ThreeD(canvas, cone_coords, 0, 0)
+# root = tk.Tk()
+# canvas = tk.Canvas(root)
+# canvas.pack()
+# cube_coords = [[(1,-1,1),(-1,-1,1),(-1,-1,-1),(1,-1,-1),(1,1,-1),(1,1,1),(-1,1,1),(-1,1,-1)],[[5,6,1,0,(255,255,255)]],[[4,5,0,3,(0,255,0)]],[[2,7,4,3,(0,0,255)]],[[1,6,7,2,(255,255,255)]],[[6,5,4,7,(0,255,255)]],[[1,2,3,0,(255,255,0)]]]
+# cone_coords = [[(1,-1,1),(-1,-1,1),(-1,-1,-1),(1,-1,-1),(0,1,0)],[[1,2,3,0,(255,0,0)]],[[1,0,4,(255,0,0)]],[[0,3,4,(255,0,0)]],[[2,4,3,(255,0,0)]],[[1,4,2,(255,0,0)]]]
+# cube = ThreeD(canvas, cube_coords)
+# cone = ThreeD(canvas, cone_coords)
 # cube.print_object()
 # cube.dynamic_movement()
-cone.print_object()
-cone.dynamic_movement()
-root.mainloop()
+# cone.print_object()
+# cone.dynamic_movement()
+# root.mainloop()
+
+# root = tk.Tk()
+# # colour_selected = tk.StringVar()
+# input_button = tk.Entry(root)
+# colour_label = tk.Label(root, text = input_button.get())
+#
+# def sel_col():
+#     # colour_selected.set(str(c_chooser.askcolor()[0]))
+#     colour_label.config(text = input_button.get())
+#
+# button_frame = tk.Frame(root)
+# select_colour_button = tk.Button(button_frame, text = 'OK', command = sel_col)
+#
+# input_button.pack(fill = tk.BOTH)
+# colour_label.pack()
+# button_frame.pack(side = 'right')
+# select_colour_button.pack(fill = tk.BOTH)
+#
+#
+# root.mainloop()
+
+class input_info():
+
+    def __init__(self):
+        self.root = tk.Tk()
+        self.root.title("3D Renderer")
+
+        self.heading_frame = tk.Frame(self.root)
+        heading = tk.Label(self.heading_frame, text = "3D Renderer", font = ("Arial Black", 30))
+
+        self.body_frame = tk.Frame(self.root)
+        q = tk.Label(self.body_frame, text = '''Please input the 3D coordinates of the corner points of your shape.
+        (It should be of the form (x,y,z):(x,y,z):(x,y,z):.....)''', font = ("Arial", 18))
+        q2 = tk.Label(self.body_frame, text = '''Please input the number of sides in your 3D shape.''', font = ("Arial", 18))
+
+
+        self.points_input = tk.Entry(self.body_frame, font = ("Arial", 18), width = 50)
+        self.surface_input = tk.Entry(self.body_frame, font = ("Arial", 18))
+
+        empty_label = tk.Label(self.body_frame, text = '')
+
+        self.button_frame = tk.Frame(self.root)
+        done_button = tk.Button(self.button_frame, text = "Done", height = 2, width = 20, bg = "grey", command = self.connect_points)
+
+
+        self.heading_frame.pack(side = 'top')
+        self.body_frame.pack()
+        heading.pack()
+        q.grid(row = 0)
+        self.points_input.grid(row = 1)
+        empty_label.grid(row = 2)
+        q2.grid(row = 3)
+        self.surface_input.grid(row = 4)
+        self.button_frame.pack(side = 'bottom')
+        done_button.grid(row = 0, pady = 15)
+
+        self.root.mainloop()
+
+    def set_points(self):
+        temp_points = self.points_input.get()
+        temp_points2 = ''
+
+        for stuff in temp_points:
+            if stuff!=' ':
+                temp_points2+=stuff
+
+        try:
+            point_list = temp_points2.split(':')
+            self.points = []
+
+            for point in point_list:
+                x,y,z = point[1:-1].split(",")
+                self.points.append((int(x),int(y),int(z)))
+
+            self.surfaces = int(self.surface_input.get())
+
+            self.body_frame.destroy()
+            self.button_frame.destroy()
+            return 1
+
+        except:
+            error_label = tk.Label(self.body_frame, text = "There's something wrong in your input!",  font = ("Arial", 14))
+            error_label.grid(row = 5)
+            return 0
+
+    def connect_points(self):
+        if self.set_points():
+            self.curr_index = 0
+            self.body_frame = tk.Frame(self.root)
+            index_frame = tk.Frame(self.body_frame)
+            input_frame = tk.Frame(self.body_frame)
+            self.button_frame = tk.Frame(self.root)
+            self.order_list = []
+            self.side_label = tk.Label(self.body_frame, text = "Side "+str(self.curr_index+1), font = ("Arial", 28))
+            point_index = tk.Label(index_frame, text = "Points\n"+ self.get_points_string(), font = ("Arial", 18))
+            instruction = tk.Label(input_frame, text = "Input the idexes of the points that connect to make this side (For eg. 0,2,4,3), and choose its colour.\nMake sure you use the right hand rule for the order of the points.", font = ("Arial", 15))
+            self.order_input = tk.Entry(input_frame, font = ("Arial", 18))
+            next_button = tk.Button(self.button_frame, text = 'Next', bg = 'grey', height = 3, width = 30, command = self.go_next)
+            back_button = tk.Button(self.button_frame, text = 'Back', bg = 'grey', height = 3, width = 30, command = self.go_back)
+            self.colour_chosen = (255,255,255)
+            self.error = 0
+            self.colour_button = tk.Button(input_frame, text = 'Choose colour', bg = 'grey', command = self.colour_chooser)
+            self.body_frame.pack(side = 'top')
+            self.button_frame.pack(side = 'bottom')
+            self.side_label.grid(row = 0, columnspan = 2)
+            index_frame.grid(row = 1, column = 0)
+            input_frame.grid(row = 1, column = 1)
+            point_index.pack()
+            instruction.grid(row = 0)
+            self.order_input.grid(row = 1)
+            self.colour_button.grid(row = 2)
+            back_button.grid(row = 0, column = 0, padx = 25)
+            next_button.grid(row = 0, column = 1, padx = 25)
+
+
+    def get_points_string(self):
+        index = 0
+        final_string = ''
+
+        for point in self.points:
+            final_string+=str(index)+': '+str(point)+'\n'
+            index+=1
+
+        return final_string
+
+    def go_next(self):
+        if self.error:
+            self.error_label.destroy()
+        if self.curr_index<self.surfaces:
+            order = self.order_input.get()
+            if self.check_order(order):
+                self.order_input.delete(0,len(order))
+                order = order.split(',')
+                for i in range(len(order)):
+                    order[i] = int(order[i])
+                order.append(self.colour_chosen)
+                self.colour_chosen = (255,255,255)
+                if self.curr_index==self.surfaces-1:
+                    self.order_list.append([order])
+                    self.draw_shape()
+                else:
+                    self.curr_index+=1
+                    self.colour_button.config(bg = 'grey')
+                    self.order_list.append([order])
+                    self.side_label.config(text = "Side "+str(self.curr_index+1))
+
+
+    def go_back(self):
+        if self.curr_index>0:
+            self.curr_index-=1
+            self.order_list = self.order_list[:-1]
+            self.side_label.config(text = "Side "+str(self.curr_index+1))
+            self.order_input.delete(0,len(self.order_input.get()))
+
+    def colour_chooser(self):
+        r,g,b = c_chooser.askcolor()[0]
+        self.colour_chosen = (int(r),int(g),int(b))
+        self.colour_button.config(bg = '#%02x%02x%02x' % self.colour_chosen)
+
+    def draw_shape(self):
+        self.body_frame.destroy()
+        self.button_frame.destroy()
+        canvas = tk.Canvas(self.root)
+        canvas.pack()
+        shape = ThreeD(canvas, [self.points]+self.order_list)
+        shape.print_object()
+        shape.dynamic_movement()
+
+    def check_order(self,order):
+        try:
+            indexes = order.split(',')
+            self.error = 0
+            for i in range(len(indexes)):
+                indexes[i] = int(indexes[i])
+                if indexes[i]>=len(self.points):
+                    self.error = 1
+        except:
+            self.error = 1
+
+        if self.error:
+            self.error_label = tk.Label(self.body_frame, text = "There's something wrong with your input!", font = ("Arial",18))
+            self.error_label.grid(row = 2, columnspan = 2)
+
+        return not self.error
+
+
+
+
+if __name__ == '__main__':
+    Input = input_info()
